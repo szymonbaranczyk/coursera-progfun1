@@ -176,7 +176,7 @@ object Huffman {
     def decode(tree: CodeTree, bits: List[Bit]): List[Char] = {
       def decodeAcc(tree: CodeTree, bits: List[Bit], acc:List[Char],root:CodeTree): List[Char] = {
         (tree,bits) match {
-          case (_,List()) => acc
+          case (l:Leaf,List()) => acc:::List(l.char)
           case (l:Leaf,hd::tl) => decodeAcc(root,bits,acc:::List(l.char),root)
           case (f:Fork,hd::tl) => decodeAcc(if(hd==0) f.left else f.right,tl,acc,root)
         }
