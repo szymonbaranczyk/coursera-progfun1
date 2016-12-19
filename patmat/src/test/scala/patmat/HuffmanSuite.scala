@@ -38,7 +38,7 @@ class HuffmanSuite extends FunSuite {
     assert(makeOrderedLeafList(List(('t', 2), ('e', 1), ('x', 3))) === List(Leaf('e',1), Leaf('t',2), Leaf('x',3)))
   }
 
-  test("makeOrderedLeafList of times result") {
+  test("makeOrderedLeafList of times result") { //test
     val time = times("bcaaacb".toList)
     val leaves = makeOrderedLeafList(time)
     combine(leaves)
