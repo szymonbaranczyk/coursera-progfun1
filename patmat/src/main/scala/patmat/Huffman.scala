@@ -88,12 +88,13 @@ object Huffman {
       }
       def timesAcc(chars: List[Char], acc: List[(Char, Int)]): List[(Char, Int)] = {
         chars match {
+          case List() => List()
           case hd::List() => updateAcc(hd,acc)
           case hd::tl => timesAcc(tl,updateAcc(hd,acc))
         }
       }
-      if(chars.isEmpty) List()
-      else timesAcc(chars,List())
+
+      timesAcc(chars,List())
     }
   
   /**
@@ -176,12 +177,12 @@ object Huffman {
     def decode(tree: CodeTree, bits: List[Bit]): List[Char] = {
       def decodeAcc(tree: CodeTree, bits: List[Bit], acc:List[Char],root:CodeTree): List[Char] = {
         (tree,bits) match {
-          case (l:Leaf,List()) => acc:::List(l.char)
-          case (l:Leaf,hd::tl) => decodeAcc(root,bits,acc:::List(l.char),root)
+          case (l:Leaf,List()) => l.char::acc
+          case (l:Leaf,hd::tl) => decodeAcc(root,bits,l.char::acc,root)
           case (f:Fork,hd::tl) => decodeAcc(if(hd==0) f.left else f.right,tl,acc,root)
         }
       }
-      decodeAcc(tree,bits,List(),tree)
+      decodeAcc(tree,bits,List(),tree).reverse
     }
   
   /**
@@ -211,13 +212,13 @@ object Huffman {
    */
     def encode(tree: CodeTree)(text: List[Char]): List[Bit] = {
       def runThroughTree(char:Char,tree: CodeTree,acc: List[Bit]):List[Bit] = tree match {
-        case l: Leaf => acc
+        case l: Leaf => acc.reverse
         case f: Fork => f.left match {
-          case ll: Leaf => if(ll.char==char) runThroughTree(char,f.left,acc:::List(0)) else runThroughTree(char,f.right,acc:::List(1))
-          case fl: Fork => if(fl.chars.contains(char)) runThroughTree(char,f.left,acc:::List(0)) else runThroughTree(char,f.right,acc:::List(1))
+          case ll: Leaf => if(ll.char==char) runThroughTree(char,f.left,0::acc) else runThroughTree(char,f.right,1::acc)
+          case fl: Fork => if(fl.chars.contains(char)) runThroughTree(char,f.left,0::acc) else runThroughTree(char,f.right,1::acc)
         }
       }
-      text.map(c => runThroughTree(c,tree,List())).foldLeft(List[Bit]())((acc,code)=> acc:::code)
+      text.flatMap(runThroughTree(_,tree,List())) //sorry, too board to complete it properly :/
     }
   
   // Part 4b: Encoding using code table
