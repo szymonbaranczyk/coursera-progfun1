@@ -64,6 +64,7 @@ class AnagramsSuite extends FunSuite  {
       List(('a', 1), ('b', 2)),
       List(('a', 2), ('b', 2))
     )
+    println(abbacomb.toSet.intersect(combinations(abba).toSet))
     assert(combinations(abba).toSet === abbacomb.toSet)
   }
 
